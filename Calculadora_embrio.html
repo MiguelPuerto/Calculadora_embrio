@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculadora de Nota de Embriología</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        div {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        input[type="number"] {
+            width: calc(100% - 16px);
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1.1em;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #resultado-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            font-size: 1.1em;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .nota {
+            font-size: 1.5em;
+            color: #28a745;
+        }
+
+        .mensaje {
+            font-style: italic;
+            color: #6c757d;
+            margin-top: 5px;
+            font-size: 1em;
+        }
+
+        #captcha-container {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .captcha-box {
+            display: inline-flex;
+            align-items: center;
+            background-color: #f9f9f9;
+            border: 1px solid #d3d3d3;
+            border-radius: 4px;
+            padding: 18px 24px;
+            justify-content: flex-start;
+        }
+
+        #captcha-checkbox {
+            width: 28px;
+            height: 28px;
+            margin-right: 16px;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+
+        #captcha-label {
+            vertical-align: middle;
+            font-size: 0.8em;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            color: #000;
+            font-weight: 300;
+        }
+
+        .oculto {
+            display: none;
+        }
+
+        .error-captcha {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>¿Cuánto me saqué en el parcial de embrio?</h1>
+
+        <div>
+            <label for="variable1">Preguntas correctas del parcial (/30):</label>
+            <input type="number" id="variable1">
+        </div>
+
+        <div>
+            <label for="variable2">Nota del taller (/30):</label>
+            <input type="number" id="variable2">
+        </div>
+
+        <button onclick="verificarCalculo()">Calcular Nota</button>
+
+        <div id="resultado-container" class="oculto">
+            Resultado: <span id="resultado" class="nota"></span>
+            <p id="mensaje" class="mensaje"></p>
+            <div id="captcha-container" class="oculto">
+                <div class="captcha-box">
+                    <input type="checkbox" id="captcha-checkbox">
+                    <label for="captcha-checkbox" id="captcha-label">No soy un robot</label>
+                </div>
+                <p id="error-captcha" class="error-captcha oculto">Por favor, verifica que no eres un robot.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const resultadoContainer = document.getElementById("resultado-container");
+        const resultadoTexto = document.getElementById("resultado");
+        const mensajeTexto = document.getElementById("mensaje");
+        const captchaContainer = document.getElementById("captcha-container");
+        const captchaCheckbox = document.getElementById("captcha-checkbox");
+        const errorCaptcha = document.getElementById("error-captcha");
+
+        function calcularNota() {
+            const x = parseFloat(document.getElementById("variable1").value);
+            const y = parseFloat(document.getElementById("variable2").value);
+            let notaFinal;
+
+            notaFinal = (14 * x + 3 * y) / 102;
+            const notaFormateada = notaFinal.toFixed(2);
+
+            resultadoTexto.textContent = notaFormateada;
+            resultadoContainer.classList.remove("oculto");
+            mensajeTexto.classList.add("oculto");
+            captchaContainer.classList.add("oculto");
+            errorCaptcha.classList.add("oculto");
+
+            if (notaFinal >= 4.50 && notaFinal <= 5.00) {
+                captchaContainer.classList.remove("oculto");
+            } else if (notaFinal >= 4.00 && notaFinal <= 4.49) {
+                mensajeTexto.textContent = ":D";
+                mensajeTexto.classList.remove("oculto");
+            } else if (notaFinal >= 3.40 && notaFinal <= 3.99) {
+                mensajeTexto.textContent = ":“D";
+                mensajeTexto.classList.remove("oculto");
+            } else if (notaFinal >= 3.00 && notaFinal <= 3.39) {
+                mensajeTexto.textContent = "3 es nota lo demás es avaricia";
+                mensajeTexto.classList.remove("oculto");
+            } else if (notaFinal >= 2.80 && notaFinal <= 2.99) {
+                mensajeTexto.textContent = "Pa’ ser tan demalas";
+                mensajeTexto.classList.remove("oculto");
+            } else if (notaFinal >= 2.00 && notaFinal <= 2.79) {
+                mensajeTexto.textContent = "Eso el siguiente parcial se remonta";
+                mensajeTexto.classList.remove("oculto");
+            } else if (notaFinal >= 0 && notaFinal <= 1.99) {
+                mensajeTexto.textContent = "Nos vemos el otro semestre ;)";
+                mensajeTexto.classList.remove("oculto");
+            }
+        }
+
+        function verificarCalculo() {
+            calcularNota();
+
+            if (parseFloat(document.getElementById("resultado").textContent) >= 4.5) {
+                if (!captchaCheckbox.checked) {
+                    errorCaptcha.classList.remove("oculto");
+                    return;
+                } else {
+                    console.log("Captcha verificado.");
+                }
+            } else {
+                console.log("Nota menor a 4.5, no se requiere verificación del captcha.");
+            }
+        }
+    </script>
+</body>
+</html>
